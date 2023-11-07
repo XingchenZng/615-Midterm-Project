@@ -1,0 +1,524 @@
+---
+title: "615-midterm"
+author: "Xingchen Zhang"
+format: 
+  html:
+    toc: true
+    code-fold: true
+editor: visual
+---
+```{r}
+#| label: Load libraries
+#| warning: false
+#| message: false
+#| echo: false
+library(dplyr)
+library(tidyverse)
+library(esquisse)
+library(knitr)
+library(kableExtra)
+library(gridExtra)
+```
+
+## Data Cleaning for both years
+```{r}
+#| echo: false
+storm_20=read.csv("details2020.csv",header=T)
+storm_21=read.csv("details2021.csv",header=T)
+```
+
+First, we can get all of the event types for both of the years and we can select all the events that contain "flood".
+```{r}
+#| echo: false
+unique(storm_20$EVENT_TYPE) #See all the disasters we have in the data set.
+all2020=c(unique(storm_20$EVENT_TYPE))
+rel_2020flood=all2020[grepl("Flood", all2020)] #Choose the event that contains flood.
+print(rel_2020flood)
+flood2020=subset(storm_20,EVENT_TYPE %in% rel_2020flood) #Give the table that only contains flood related events.
+blank=colSums(is.na(flood2020) | flood2020 == "") == nrow(flood2020) #Get rid of all the cloumns that contain NA values.
+columns_blank=names(blank[blank])
+flood2020=flood2020[, !(names(flood2020) %in% columns_blank)]
+```
+
+```{r}
+#| echo: false
+unique(storm_21$EVENT_TYPE) #See all the disasters we have in the data set.
+all2021=c(unique(storm_21$EVENT_TYPE))
+rel_2021flood=all2021[grepl("Flood", all2021)] #Choose the event that contains flood.
+print(rel_2021flood)
+flood2021=subset(storm_21,EVENT_TYPE %in% rel_2021flood) #Give the table that only contains flood related events.
+blank1=colSums(is.na(flood2021) | flood2021 == "") == nrow(flood2021) #Get rid of all the cloumns that contain NA values.
+columns_blank1=names(blank1[blank1])
+flood2021=flood2021[, !(names(flood2021) %in% columns_blank1)]
+```
+## Data Description
+
+Then we have description about these types of floods.
+```{r}
+#| echo: false
+E_T <- data.frame(
+  VariableName = c("Flash Flood", "Flood", "Coastal Flood", "Lakeshore Flood"),
+  Description = c("A sudden and rapid flooding of an area","When water covers normally dry land","When water from the ocean or sea rises and inundates coastal areas","A flooding event that specifically affects areas near the shores of lakes")
+)
+E_T_table <- kable(E_T, "simple")
+print(E_T_table)
+```
+
+## Flood Type Distribution
+We can see from the bar plot that flash floods occurs the most in both of the years.
+```{r}
+#| echo: false
+FT2020=ggplot(flood2020) +
+  aes(x = EVENT_TYPE) +
+  geom_bar(fill = "black") +
+  labs(
+    x = "Flood Type",
+    y = "Counts",
+    title = "Flood Type Distribution 2020"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14L,
+    hjust = 0.5),
+    axis.title.y = element_text(size = 11L),
+    axis.title.x = element_text(size = 11L),
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)
+
+  )
+
+FT2021=ggplot(flood2021) +
+  aes(x = EVENT_TYPE) +
+  geom_bar(fill = "black") +
+  labs(
+    x = "Flood Type",
+    y = "Counts",
+    title = "Flood Type Distribution 2021"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14L,
+    hjust = 0.5),
+    axis.title.y = element_text(size = 11L),
+    axis.title.x = element_text(size = 11L),
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)
+
+  )
+grid.arrange(FT2020,FT2021, ncol = 2)
+```
+## Time Zone Distribution
+
+We can see from the time zone distribution bar plot that flood mostly happens in the EST-5 time zone in both 2020 and 2021. We can make the hypothesis that the state in EST-5 time zone has the most frequent flood.
+```{r}
+#| echo: false
+TZ2020=ggplot(flood2020) +
+  aes(x = CZ_TIMEZONE) +
+  geom_bar(fill = "black") +
+  labs(
+    x = "Time zone",
+    y = "Counts",
+    title = "Time Zone Distribution 2020"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14L,
+    hjust = 0.5),
+    axis.title.y = element_text(size = 11L),
+    axis.title.x = element_text(size = 11L),
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)
+  )
+
+TZ2021=ggplot(flood2021) +
+  aes(x = CZ_TIMEZONE) +
+  geom_bar(fill = "black") +
+  labs(
+    x = "Time zone",
+    y = "Counts",
+    title = "Time Zone Distribution 2021"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14L,
+    hjust = 0.5),
+    axis.title.y = element_text(size = 11L),
+    axis.title.x = element_text(size = 11L),
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)
+  )
+grid.arrange(TZ2020,TZ2021, ncol = 2)
+```
+## States
+
+After sorting states in descending order, we can see that the top 3 states for 2020 are Virginia, Missouri, and North Carolina; and the top 3 states for 2021 are Texas, New York, and Arizona. Except for Missouri is in the time zone of CST-6, both Virginia and North Carolina are in EST-5. But in 2021, only New York is in EST-5. Maybe we need more data from other years to justify.
+```{r}
+#| echo: false
+state_counts20=table(flood2020$STATE)
+most_state20=head(sort(state_counts20,decreasing=TRUE),10)
+
+
+state_counts21=table(flood2021$STATE)
+most_state21=head(sort(state_counts21,decreasing=TRUE),10)
+
+list_states=data.frame(States20=most_state20,States21=most_state21)
+print(list_states)
+```
+## Flood Cause
+
+From the flood cause distribution, we can see that heavy rain is the dominant reason that causes the floods in both 2020 and 2021.
+```{r}
+#| echo: false
+FC20=ggplot(flood2020) +
+  aes(x = FLOOD_CAUSE) +
+  geom_bar(fill = "black") +
+  labs(
+    x = "Flood Cause",
+    y = "Counts",
+    title = "Flood Cause Distribution 2020"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14L,
+    hjust = 0.5),
+    axis.title.y = element_text(size = 11L),
+    axis.title.x = element_text(size = 11L),
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)
+
+  )
+
+FC21=ggplot(flood2021) +
+  aes(x = FLOOD_CAUSE) +
+  geom_bar(fill = "black") +
+  labs(
+    x = "Flood Cause",
+    y = "Counts",
+    title = "Flood Cause Distribution 2021"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14L,
+    hjust = 0.5),
+    axis.title.y = element_text(size = 11L),
+    axis.title.x = element_text(size = 11L),
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)
+  )
+grid.arrange(FC20,FC21, ncol = 2)
+```
+## Months Distribution
+
+Since the primary reason for the floods is heavy rain , we can expect the floods mostly happen in summer. From the bar plot of months distribution in 2020, we can see that most of the floods happened between June to September, which fits the period of summer.
+```{r}
+#| echo: false
+months=c("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
+flood2020$MONTH_NAME=factor(flood2020$MONTH_NAME,levels=months,ordered=TRUE)
+flood2020=flood2020[order(flood2020$MONTH_NAME), ]
+
+flood2021$MONTH_NAME=factor(flood2021$MONTH_NAME,levels=months,ordered=TRUE)
+flood2021=flood2021[order(flood2021$MONTH_NAME), ]
+
+MD20=ggplot(flood2020) +
+  aes(x = MONTH_NAME) +
+  geom_bar(fill = "black") +
+  labs(
+    x = "Month",
+    y = "Counts",
+    title = "Months Distribution in 2020"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 14L, hjust = 0.5),
+        axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
+
+MD21=ggplot(flood2021) +
+  aes(x = MONTH_NAME) +
+  geom_bar(fill = "black") +
+  labs(
+    x = "Month",
+    y = "Counts",
+    title = "Months Distribution in 2021"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 14L, hjust = 0.5),
+        axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
+
+grid.arrange(MD20,MD21, ncol = 2)
+```
+## The extent of damage
+
+To examine damage property and damage crops, we need to first transform the data into numeric data.
+```{r}
+#| echo: false
+convt=function(value) {
+  if (grepl("K", value)) {
+    numeric_value=as.numeric(sub("K", "", value))
+    numeric_value * 1000
+  } else if (grepl("M", value)) {
+    numeric_value <- as.numeric(sub("M", "", value))
+    numeric_value * 1000000
+  } else {
+    as.numeric(value)
+  }
+}
+flood2020$DAMAGE_PROPERTY=sapply(flood2020$DAMAGE_PROPERTY, convt)
+flood2020$DAMAGE_CROPS=sapply(flood2020$DAMAGE_CROPS, convt)
+flood2021$DAMAGE_PROPERTY=sapply(flood2021$DAMAGE_PROPERTY, convt)
+flood2021$DAMAGE_CROPS=sapply(flood2021$DAMAGE_CROPS, convt)
+```
+
+```{r}
+#| echo: false
+I_D <- data.frame(
+  VariableName = c("Injuries_Direct(ID)","Injuries_indirect(II)","Deaths_Direct(DD)","Deaths_Indirect(DI)"),
+  Description = c("The number of people get hurt dircetly because of weather event","The number of people get hurt indirectly because of weather event","The number of people die directly because of weather event","The number of people die indirectly because of weather event")
+)
+I_D_table <- kable(I_D, "simple")
+print(I_D_table)
+```
+
+Then we can examine how injuries, death, damage to the property and crops are related to each other. After running correlation matrix for both years, we find that there is no strong correlation between these variables.  
+```{r}
+#| echo: false
+flood2020=na.omit(flood2020)
+flood2020$TOTAL_INJURIES=flood2020$INJURIES_DIRECT+flood2020$INJURIES_INDIRECT
+flood2020$TOTAL_DEATH=flood2020$DEATHS_DIRECT+flood2020$DEATHS_INDIRECT
+correlation_matrix20=cor(flood2020[, c("TOTAL_INJURIES", "TOTAL_DEATH", "DAMAGE_PROPERTY", "DAMAGE_CROPS")])
+print(correlation_matrix20)
+
+flood2021=na.omit(flood2021)
+flood2021$TOTAL_INJURIES=flood2021$INJURIES_DIRECT+flood2021$INJURIES_INDIRECT
+flood2021$TOTAL_DEATH=flood2021$DEATHS_DIRECT+flood2021$DEATHS_INDIRECT
+correlation_matrix21=cor(flood2021[, c("TOTAL_INJURIES", "TOTAL_DEATH", "DAMAGE_PROPERTY", "DAMAGE_CROPS")])
+print(correlation_matrix21)
+```
+
+Next, in order to know how danger are the floods, I calculate the duration of the floods in days for both 2020 and 2021, and name the result "DURATION_DAY". 
+
+Since there exists duplicates in EPISODE_ID, I group the data by summing all the DAMAGE_PROPERTY, DURATION_DAY, TOTAL_DEATH, TOTAL_INJURIES, and DAMAGE_CROPS together and put them into a new table named "result2020". The variable name for them, correspondingly, are total_property, total_duration, total_deaths, total_injuries, and total_crop. 
+
+Then I make a hypothesis on there exist a relationship between total_duration and total_property for year 2020 first, so I ran the linear regression model and drew a scatter plot. We set out null hypothesis as there does not exist the relationship between total_duration and total_damage. 
+
+After I ran the first scatter plot, I found it hard to see the relationship, so I chose to log the value of total_duration and total_damage and ran the model again. As we can see in the plot, there is a positive relationship between two variables. From the table, we can see that if we have a 95% confidence level, the t-value is smaller than 0.05. So we can reject the null hypothesis and conclude that there is a relationship between total_duration and total_property for year 2020.
+```{r}
+#| echo: false
+flood2020$DURATION_DAY=flood2020$END_DAY-flood2020$BEGIN_DAY
+flood2021$DURATION_DAY=flood2021$END_DAY-flood2021$BEGIN_DAY
+
+result2020=flood2020 %>%
+  group_by(EPISODE_ID) %>%
+  summarize(total_property = sum(DAMAGE_PROPERTY),
+            total_duration=sum(DURATION_DAY),
+            total_deaths=sum(TOTAL_DEATH),
+            total_injuriess=sum(TOTAL_INJURIES),
+            total_crop = sum(DAMAGE_CROPS)) %>%
+  ungroup() -> new_table
+result20201 <- result2020[result2020$total_property != 0 & result2020$total_duration != 0, ]
+
+summary(lm(log(total_property) ~ log(total_duration), data = result20201))
+
+p1=ggplot(result20201, aes(x = log(total_duration), y = log(total_property       ))) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)+
+  labs(
+    x = "Log(Duration)",
+    y = "log(Damage Property)",
+    title = "Scatter Plot Of Duration and Damage Property in 2020"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 7L,
+    hjust = 0.5),
+    axis.title.y = element_text(size = 10L),
+    axis.title.x = element_text(size = 10L))
+```
+
+
+Then, we will do the same process when it comes to 2021's data. As we can see in the plot, there is a weak positive relationship between two variables. From the table, we can see that if we have a 95% confidence level, the t-value is bigger than 0.05. So we cannot reject the null hypothesis and conclude that there exists the possibility that there is no relationship between total_duration and total_damage for year 2021.
+```{r}
+#| echo: false
+result2021=flood2021 %>%
+  group_by(EPISODE_ID) %>%
+  summarize(total_property = sum(DAMAGE_PROPERTY),
+            total_duration=sum(DURATION_DAY),
+            total_deaths=sum(TOTAL_DEATH),
+            total_injuriess=sum(TOTAL_INJURIES),
+            total_crop = sum(DAMAGE_CROPS)) %>%
+  ungroup() -> new_table
+result20211 <- result2021[result2021$total_property != 0 & result2021$total_duration != 0, ]
+
+summary(lm(log(total_property) ~ log(total_duration), data = result20211))
+
+p2=ggplot(result20211, aes(x = log(total_duration), y = log(total_property       ))) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)+
+  labs(
+    x = "Log(Duration)",
+    y = "log(Damage Property)",
+    title = "Scatter Plot Of Duration and Damage Property in 2021"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 7L,
+    hjust = 0.5),
+    axis.title.y = element_text(size = 10L),
+    axis.title.x = element_text(size = 10L))
+grid.arrange(p1,p2, ncol = 2)
+```
+
+Then, we will do the same process when we process total damage crops. As we can see in the plot, there is a positive relationship between two variables. From the table, we can see that if we have a 95% confidence level, the t-value is smaller than 0.05. So we can reject the null hypothesis and conclude that there exists the possibility that there is a relationship between total_duration and total_crop for year 2020.
+```{r}
+#| echo: false
+result20202 <- result2020[result2020$total_crop != 0 & result2020$total_duration != 0, ]
+
+summary(lm(log(total_crop) ~ log(total_duration), data = result20202))
+
+p3=ggplot(result20202, aes(x =log(total_duration), y = log(total_crop))) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)+
+  labs(
+    x = "Log(Duration)",
+    y = "log(Crop)",
+    title = "Scatter Plot Of Duration and Crop in 2020"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 7L,
+    hjust = 0.5),
+    axis.title.y = element_text(size = 10L),
+    axis.title.x = element_text(size = 10L))
+print(p3)
+```
+Then, we will do the same process when it comes to year 2021. As we can see in the plot, there is a positive relationship between two variables. From the table, we can see that if we have a 95% confidence level, the t-value is smaller than 0.05. So we can reject the null hypothesis and conclude that there exists the possibility that there is a relationship between total_duration and total_crop for year 2021.
+```{r}
+#| echo: false
+result20212 <- result2021[result2021$total_crop != 0 & result2021$total_duration != 0, ]
+
+summary(lm(log(total_crop) ~ log(total_duration), data = result20212))
+
+p4=ggplot(result20212, aes(x =log(total_duration), y = log(total_crop))) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)+
+  labs(
+    x = "Log(Duration)",
+    y = "log(Crop)",
+    title = "Scatter Plot Of Duration and Crop in 2021"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 7L,
+    hjust = 0.5),
+    axis.title.y = element_text(size = 10L),
+    axis.title.x = element_text(size = 10L))
+grid.arrange(p3,p4, ncol = 2)
+```
+As we can see in the histogram graphs, most of the values for the deaths are zero. Thus, it is hard for us to examine the relationship between the duration and the total deaths.
+```{r}
+#| echo: false
+pd20=ggplot(result2020) +
+  aes(x = total_deaths) +
+  geom_histogram(bins = 30L, fill = "black") +
+  labs(
+    x = "Total Deaths",
+    y = "Counts",
+    title = "Total Death Distribution in 2020"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 14L, hjust = 0.5))
+```
+
+```{r}
+#| echo: false
+pd21=ggplot(result2021) +
+  aes(x = total_deaths) +
+  geom_histogram(bins = 30L, fill = "black") +
+  labs(
+    x = "Total Deaths",
+    y = "Counts",
+    title = "Total Death Distribution in 2021"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 14L, hjust = 0.5))
+grid.arrange(pd20,pd21, ncol = 2)
+```
+
+The same situation happens to total injuries.
+```{r}
+#| echo: false
+pi20=ggplot(result2020) +
+  aes(x = total_injuriess) +
+  geom_histogram(bins = 30L, fill = "black") +
+  labs(
+    x = "Total Injuries",
+    y = "Counts",
+    title = "Total Injuries Distribution in 2020"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 14L, hjust = 0.5))
+```
+
+```{r}
+#| echo: false
+pi21=ggplot(result2021) +
+  aes(x = total_injuriess) +
+  geom_histogram(bins = 30L, fill = "black") +
+  labs(
+    x = "Total Injuries",
+    y = "Counts",
+    title = "Total Injuries Distribution in 2021"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 14L, hjust = 0.5))
+grid.arrange(pi20,pi21, ncol = 2)
+```
+
+## FEMA
+
+```{r}
+#| echo: false
+femas=read.csv("DisasterDeclarationsSummaries.csv")
+
+```
+
+```{r}
+#| echo: false
+P_D <- data.frame(
+  VariableName = c("ihProgramDeclared", "iaProgramDeclared", "paProgramDeclared	", "hmProgramDeclared"),
+  Description = c("Whether the Individuals and Households program was declared for this disaster","Whether the Individual Assistance program was declared for this disaster","Whether the Public Assistance program was declared for this disaster","Whether the Hazard Mitigation program was declared for this disaster")
+)
+P_D_table <- kable(P_D, "simple")
+print(P_D_table)
+```
+
+```{r}
+#| echo: false
+fema0<-femas %>%
+  filter(incidentType %in% "Flood") %>%
+  filter(fyDeclared%in% c(2020,2021))
+```
+
+According to the bar plot, we can see that when there is a flood, Individual Assistance Program never declared, Individuals and Household Program seldom declared, and Hazard Mitigation program always declared.
+```{r}
+#| echo: false
+#| message: false
+fema2=fema0 %>%
+  select(ihProgramDeclared,iaProgramDeclared,paProgramDeclared,hmProgramDeclared)
+fema3 <- reshape2::melt(fema2)
+ggplot(fema3, aes(x = variable, fill = factor(value))) +
+  geom_bar(position = "dodge") +
+  labs(
+    title = "Declaration of Program", 
+    x = "Variable", 
+    y = "Counts") +
+  scale_fill_manual(values = c("1" = "black", "0" = "grey"))+
+  theme(
+    plot.title = element_text(size = 12L, face = "bold", hjust = 0.5),
+    axis.title.y = element_text(size = 11L, face = "bold"),
+    axis.title.x = element_text(size = 11L, face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)
+  )
+```
+
+## Summary
+
+In general, I did an EDA on the impact of floods in 2020 and 2021. First, I cleaned and organized the details data from NOAA. As a result, there are four types of different floods: "Flash Flood", "Flood", "Coastal Flood", "Lakeshore Flood". 
+
+After cleaning the data, I did some data visualization. For example, after addressing the bar plots, we can know that "Flash Floods" is the kind of floods that happened most frequently. Also, most of the floods were caused by heavy rain. Most of the floods happened during the summer. For the location, it is possible that states in or near EST-5 were easier to have floods.
+
+Next, I did the data analysis. In general, I assess the extent of damage that floods led to. I made the hypothesis that the longer the duration of floods lasted, the more serious the damage would be. I eliminated all of the zero values when I did the analysis for total damage of property and crops since too many zero values will have negative impacts on finding the relationship. We can get positive relationship on both relationships between duration time and total property damage and crops damage. For deaths and injuries, since most of their values are zero, it is hard for us to run a regression.
+
+Finally, I did a simple EDA on the FEMA data. From the plot, we can see that when there is a flood, Individual Assistance Program never declared, Individuals and Household Program seldom declared, and Hazard Mitigation program always declared. 

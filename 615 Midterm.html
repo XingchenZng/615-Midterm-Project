@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Xingchen Zhang">
+
+<title>615-midterm</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="615 Midterm_files/libs/clipboard/clipboard.min.js"></script>
+<script src="615 Midterm_files/libs/quarto-html/quarto.js"></script>
+<script src="615 Midterm_files/libs/quarto-html/popper.min.js"></script>
+<script src="615 Midterm_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="615 Midterm_files/libs/quarto-html/anchor.min.js"></script>
+<link href="615 Midterm_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="615 Midterm_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="615 Midterm_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="615 Midterm_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="615 Midterm_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#data-cleaning-for-both-years" id="toc-data-cleaning-for-both-years" class="nav-link active" data-scroll-target="#data-cleaning-for-both-years">Data Cleaning for both years</a></li>
+  <li><a href="#data-description" id="toc-data-description" class="nav-link" data-scroll-target="#data-description">Data Description</a></li>
+  <li><a href="#flood-type-distribution" id="toc-flood-type-distribution" class="nav-link" data-scroll-target="#flood-type-distribution">Flood Type Distribution</a></li>
+  <li><a href="#time-zone-distribution" id="toc-time-zone-distribution" class="nav-link" data-scroll-target="#time-zone-distribution">Time Zone Distribution</a></li>
+  <li><a href="#states" id="toc-states" class="nav-link" data-scroll-target="#states">States</a></li>
+  <li><a href="#flood-cause" id="toc-flood-cause" class="nav-link" data-scroll-target="#flood-cause">Flood Cause</a></li>
+  <li><a href="#months-distribution" id="toc-months-distribution" class="nav-link" data-scroll-target="#months-distribution">Months Distribution</a></li>
+  <li><a href="#the-extent-of-damage" id="toc-the-extent-of-damage" class="nav-link" data-scroll-target="#the-extent-of-damage">The extent of damage</a></li>
+  <li><a href="#fema" id="toc-fema" class="nav-link" data-scroll-target="#fema">FEMA</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">615-midterm</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Xingchen Zhang </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="data-cleaning-for-both-years" class="level2">
+<h2 class="anchored" data-anchor-id="data-cleaning-for-both-years">Data Cleaning for both years</h2>
+<p>First, we can get all of the event types for both of the years and we can select all the events that contain “flood”.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "Thunderstorm Wind"          "Flash Flood"               
+ [3] "Winter Storm"               "Hail"                      
+ [5] "Strong Wind"                "Flood"                     
+ [7] "High Wind"                  "High Surf"                 
+ [9] "Heavy Rain"                 "Tornado"                   
+[11] "Coastal Flood"              "Rip Current"               
+[13] "Waterspout"                 "Debris Flow"               
+[15] "Funnel Cloud"               "Marine Thunderstorm Wind"  
+[17] "Heat"                       "Excessive Heat"            
+[19] "Frost/Freeze"               "Tropical Storm"            
+[21] "Lightning"                  "Marine Hail"               
+[23] "Drought"                    "Winter Weather"            
+[25] "Wildfire"                   "Marine High Wind"          
+[27] "Avalanche"                  "Lakeshore Flood"           
+[29] "Dust Storm"                 "Ice Storm"                 
+[31] "Marine Tropical Storm"      "Dense Fog"                 
+[33] "Heavy Snow"                 "Blizzard"                  
+[35] "Storm Surge/Tide"           "Hurricane"                 
+[37] "Lake-Effect Snow"           "Extreme Cold/Wind Chill"   
+[39] "Sleet"                      "Astronomical Low Tide"     
+[41] "Cold/Wind Chill"            "Freezing Fog"              
+[43] "Dust Devil"                 "Tropical Depression"       
+[45] "Marine Strong Wind"         "Marine Dense Fog"          
+[47] "Seiche"                     "Marine Hurricane/Typhoon"  
+[49] "Dense Smoke"                "Marine Tropical Depression"
+[51] "Sneakerwave"               </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Flash Flood"     "Flood"           "Coastal Flood"   "Lakeshore Flood"</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "Tornado"                    "Thunderstorm Wind"         
+ [3] "Flash Flood"                "Excessive Heat"            
+ [5] "Winter Storm"               "Extreme Cold/Wind Chill"   
+ [7] "High Wind"                  "Heavy Snow"                
+ [9] "Lightning"                  "Flood"                     
+[11] "Heavy Rain"                 "Marine Thunderstorm Wind"  
+[13] "Hail"                       "Debris Flow"               
+[15] "Rip Current"                "Dense Fog"                 
+[17] "Blizzard"                   "Drought"                   
+[19] "Coastal Flood"              "Strong Wind"               
+[21] "Winter Weather"             "High Surf"                 
+[23] "Tropical Storm"             "Marine High Wind"          
+[25] "Wildfire"                   "Sleet"                     
+[27] "Tropical Depression"        "Ice Storm"                 
+[29] "Heat"                       "Funnel Cloud"              
+[31] "Cold/Wind Chill"            "Lakeshore Flood"           
+[33] "Waterspout"                 "Marine Hail"               
+[35] "Frost/Freeze"               "Dust Storm"                
+[37] "Lake-Effect Snow"           "Marine Strong Wind"        
+[39] "Marine Tropical Storm"      "Avalanche"                 
+[41] "Hurricane"                  "Astronomical Low Tide"     
+[43] "Freezing Fog"               "Marine Dense Fog"          
+[45] "Sneakerwave"                "Storm Surge/Tide"          
+[47] "Marine Tropical Depression" "Marine Hurricane/Typhoon"  </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Flash Flood"     "Flood"           "Coastal Flood"   "Lakeshore Flood"</code></pre>
+</div>
+</div>
+</section>
+<section id="data-description" class="level2">
+<h2 class="anchored" data-anchor-id="data-description">Data Description</h2>
+<p>Then we have description about these types of floods.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+
+VariableName      Description                                                               
+----------------  --------------------------------------------------------------------------
+Flash Flood       A sudden and rapid flooding of an area                                    
+Flood             When water covers normally dry land                                       
+Coastal Flood     When water from the ocean or sea rises and inundates coastal areas        
+Lakeshore Flood   A flooding event that specifically affects areas near the shores of lakes </code></pre>
+</div>
+</div>
+</section>
+<section id="flood-type-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="flood-type-distribution">Flood Type Distribution</h2>
+<p>We can see from the bar plot that flash floods occurs the most in both of the years.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="615-Midterm_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="time-zone-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="time-zone-distribution">Time Zone Distribution</h2>
+<p>We can see from the time zone distribution bar plot that flood mostly happens in the EST-5 time zone in both 2020 and 2021. We can make the hypothesis that the state in EST-5 time zone has the most frequent flood.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="615-Midterm_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="states" class="level2">
+<h2 class="anchored" data-anchor-id="states">States</h2>
+<p>After sorting states in descending order, we can see that the top 3 states for 2020 are Virginia, Missouri, and North Carolina; and the top 3 states for 2021 are Texas, New York, and Arizona. Except for Missouri is in the time zone of CST-6, both Virginia and North Carolina are in EST-5. But in 2021, only New York is in EST-5. Maybe we need more data from other years to justify.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>    States20.Var1 States20.Freq States21.Var1 States21.Freq
+1        VIRGINIA           635         TEXAS           505
+2        MISSOURI           453      NEW YORK           454
+3  NORTH CAROLINA           403       ARIZONA           410
+4         GEORGIA           313      VIRGINIA           405
+5        KENTUCKY           300      KENTUCKY           396
+6            OHIO           299      MISSOURI           344
+7        ILLINOIS           285  PENNSYLVANIA           298
+8         FLORIDA           269      MARYLAND           272
+9        ARKANSAS           256    NEW JERSEY           272
+10       MARYLAND           255     TENNESSEE           243</code></pre>
+</div>
+</div>
+</section>
+<section id="flood-cause" class="level2">
+<h2 class="anchored" data-anchor-id="flood-cause">Flood Cause</h2>
+<p>From the flood cause distribution, we can see that heavy rain is the dominant reason that causes the floods in both 2020 and 2021.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="615-Midterm_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="months-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="months-distribution">Months Distribution</h2>
+<p>Since the primary reason for the floods is heavy rain , we can expect the floods mostly happen in summer. From the bar plot of months distribution in 2020, we can see that most of the floods happened between June to September, which fits the period of summer.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="615-Midterm_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="the-extent-of-damage" class="level2">
+<h2 class="anchored" data-anchor-id="the-extent-of-damage">The extent of damage</h2>
+<p>To examine damage property and damage crops, we need to first transform the data into numeric data.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+
+VariableName            Description                                                       
+----------------------  ------------------------------------------------------------------
+Injuries_Direct(ID)     The number of people get hurt dircetly because of weather event   
+Injuries_indirect(II)   The number of people get hurt indirectly because of weather event 
+Deaths_Direct(DD)       The number of people die directly because of weather event        
+Deaths_Indirect(DI)     The number of people die indirectly because of weather event      </code></pre>
+</div>
+</div>
+<p>Then we can examine how injuries, death, damage to the property and crops are related to each other. After running correlation matrix for both years, we find that there is no strong correlation between these variables.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>                TOTAL_INJURIES  TOTAL_DEATH DAMAGE_PROPERTY  DAMAGE_CROPS
+TOTAL_INJURIES    1.0000000000  0.157268127    -0.001054798 -0.0007076887
+TOTAL_DEATH       0.1572681266  1.000000000     0.013327374 -0.0015469308
+DAMAGE_PROPERTY  -0.0010547980  0.013327374     1.000000000  0.0906630622
+DAMAGE_CROPS     -0.0007076887 -0.001546931     0.090663062  1.0000000000</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                TOTAL_INJURIES TOTAL_DEATH DAMAGE_PROPERTY DAMAGE_CROPS
+TOTAL_INJURIES     1.000000000  0.09487222     0.001786203 -0.001507327
+TOTAL_DEATH        0.094872215  1.00000000     0.267768489  0.112764732
+DAMAGE_PROPERTY    0.001786203  0.26776849     1.000000000  0.126495956
+DAMAGE_CROPS      -0.001507327  0.11276473     0.126495956  1.000000000</code></pre>
+</div>
+</div>
+<p>Next, in order to know how danger are the floods, I calculate the duration of the floods in days for both 2020 and 2021, and name the result “DURATION_DAY”.</p>
+<p>Since there exists duplicates in EPISODE_ID, I group the data by summing all the DAMAGE_PROPERTY, DURATION_DAY, TOTAL_DEATH, TOTAL_INJURIES, and DAMAGE_CROPS together and put them into a new table named “result2020”. The variable name for them, correspondingly, are total_property, total_duration, total_deaths, total_injuries, and total_crop.</p>
+<p>Then I make a hypothesis on there exist a relationship between total_duration and total_property for year 2020 first, so I ran the linear regression model and drew a scatter plot. We set out null hypothesis as there does not exist the relationship between total_duration and total_damage.</p>
+<p>After I ran the first scatter plot, I found it hard to see the relationship, so I chose to log the value of total_duration and total_damage and ran the model again. As we can see in the plot, there is a positive relationship between two variables. From the table, we can see that if we have a 95% confidence level, the t-value is smaller than 0.05. So we can reject the null hypothesis and conclude that there is a relationship between total_duration and total_property for year 2020.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = log(total_property) ~ log(total_duration), data = result20201)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-6.232 -1.627 -0.363  1.359  9.082 
+
+Coefficients:
+                    Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)          10.2553     0.2847  36.020  &lt; 2e-16 ***
+log(total_duration)   0.8397     0.1741   4.823 3.27e-06 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 2.509 on 160 degrees of freedom
+Multiple R-squared:  0.1269,    Adjusted R-squared:  0.1215 
+F-statistic: 23.26 on 1 and 160 DF,  p-value: 3.271e-06</code></pre>
+</div>
+</div>
+<p>Then, we will do the same process when it comes to 2021’s data. As we can see in the plot, there is a weak positive relationship between two variables. From the table, we can see that if we have a 95% confidence level, the t-value is bigger than 0.05. So we cannot reject the null hypothesis and conclude that there exists the possibility that there is no relationship between total_duration and total_damage for year 2021.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = log(total_property) ~ log(total_duration), data = result20211)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-7.2915 -1.8613 -0.1833  1.9895  7.9134 
+
+Coefficients:
+                    Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)          11.8967     0.3617  32.894   &lt;2e-16 ***
+log(total_duration)   0.1457     0.2309   0.631    0.529    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 3.004 on 136 degrees of freedom
+Multiple R-squared:  0.002919,  Adjusted R-squared:  -0.004412 
+F-statistic: 0.3982 on 1 and 136 DF,  p-value: 0.5291</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="615-Midterm_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Then, we will do the same process when we process total damage crops. As we can see in the plot, there is a positive relationship between two variables. From the table, we can see that if we have a 95% confidence level, the t-value is smaller than 0.05. So we can reject the null hypothesis and conclude that there exists the possibility that there is a relationship between total_duration and total_crop for year 2020.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = log(total_crop) ~ log(total_duration), data = result20202)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-4.7858 -1.4661 -0.0723  0.5921  7.6622 
+
+Coefficients:
+                    Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)           8.5895     0.7609  11.288 7.16e-13 ***
+log(total_duration)   0.7295     0.3358   2.173   0.0371 *  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 2.737 on 33 degrees of freedom
+Multiple R-squared:  0.1251,    Adjusted R-squared:  0.09864 
+F-statistic: 4.721 on 1 and 33 DF,  p-value: 0.03708</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="615-Midterm_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Then, we will do the same process when it comes to year 2021. As we can see in the plot, there is a positive relationship between two variables. From the table, we can see that if we have a 95% confidence level, the t-value is smaller than 0.05. So we can reject the null hypothesis and conclude that there exists the possibility that there is a relationship between total_duration and total_crop for year 2021.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = log(total_crop) ~ log(total_duration), data = result20212)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-5.077 -1.728 -0.472  2.247  5.806 
+
+Coefficients:
+                    Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)           9.6823     0.9651  10.033 1.83e-09 ***
+log(total_duration)   0.8121     0.7032   1.155    0.261    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 3.244 on 21 degrees of freedom
+Multiple R-squared:  0.05972,   Adjusted R-squared:  0.01494 
+F-statistic: 1.334 on 1 and 21 DF,  p-value: 0.2611</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="615-Midterm_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>As we can see in the histogram graphs, most of the values for the deaths are zero. Thus, it is hard for us to examine the relationship between the duration and the total deaths.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="615-Midterm_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>The same situation happens to total injuries.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="615-Midterm_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="fema" class="level2">
+<h2 class="anchored" data-anchor-id="fema">FEMA</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+
+VariableName        Description                                                                   
+------------------  ------------------------------------------------------------------------------
+ihProgramDeclared   Whether the Individuals and Households program was declared for this disaster 
+iaProgramDeclared   Whether the Individual Assistance program was declared for this disaster      
+paProgramDeclared   Whether the Public Assistance program was declared for this disaster          
+hmProgramDeclared   Whether the Hazard Mitigation program was declared for this disaster          </code></pre>
+</div>
+</div>
+<p>According to the bar plot, we can see that when there is a flood, Individual Assistance Program never declared, Individuals and Household Program seldom declared, and Hazard Mitigation program always declared.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="615-Midterm_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<p>In general, I did an EDA on the impact of floods in 2020 and 2021. First, I cleaned and organized the details data from NOAA. As a result, there are four types of different floods: “Flash Flood”, “Flood”, “Coastal Flood”, “Lakeshore Flood”.</p>
+<p>After cleaning the data, I did some data visualization. For example, after addressing the bar plots, we can know that “Flash Floods” is the kind of floods that happened most frequently. Also, most of the floods were caused by heavy rain. Most of the floods happened during the summer. For the location, it is possible that states in or near EST-5 were easier to have floods.</p>
+<p>Next, I did the data analysis. In general, I assess the extent of damage that floods led to. I made the hypothesis that the longer the duration of floods lasted, the more serious the damage would be. I eliminated all of the zero values when I did the analysis for total damage of property and crops since too many zero values will have negative impacts on finding the relationship. We can get positive relationship on both relationships between duration time and total property damage and crops damage. For deaths and injuries, since most of their values are zero, it is hard for us to run a regression.</p>
+<p>Finally, I did a simple EDA on the FEMA data. From the plot, we can see that when there is a flood, Individual Assistance Program never declared, Individuals and Household Program seldom declared, and Hazard Mitigation program always declared.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
